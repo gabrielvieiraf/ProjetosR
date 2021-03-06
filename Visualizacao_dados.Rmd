@@ -1,0 +1,88 @@
+---
+title: "Visualização de dados em R e python"
+output: html_notebook
+---
+
+### Lendo planilha google pelo link
+```{r} 
+library(googlesheets4)
+
+link_planilha <- "link"
+
+planilha <- read_sheet(link_planilha)
+```
+
+### Dataframe criado
+```{r}
+planilha
+```
+
+### Gráfico 01 - R
+
+```{r} 
+counts <- table(planilha$Cliente)
+barplot(counts, main="Pareto de Clientes", xlab="Cliente", ylab="Nº de pedidos",
+        border = F, col= c(1,2,3,4,5))
+
+#install.packages('reticulate')
+```
+```{r} 
+
+library(reticulate) # python & R
+
+```
+
+# Importantando Plotly
+```{r} 
+library(dplyr)
+library(plotly)
+
+```
+
+# Gráfico 02 - R com plotly
+```{r} 
+library(plotly)
+
+data <- data.frame(df0['Cliente'],df0['n'])
+
+data
+
+fig <- plot_ly(
+  x = data$Cliente,
+  y = data$n,
+  type = "bar"
+)
+
+fig <- fig %>% layout(
+    title = "Pareto de Clientes",
+)
+
+fig
+```
+
+# Instalando Libs de Python
+```{r}
+
+py_install('seaborn')
+
+```
+
+### Gráfico 03 - Python + R + seaborn
+```{r paged.print=TRUE}
+sns <- import("seaborn")
+plt <- import('matplotlib.pyplot')
+pd <- import('pandas')
+
+planilha['Cliente']
+
+dplyr::count(planilha, planilha['Cliente'], sort = TRUE)
+
+df0 <- dplyr::count(planilha, planilha['Cliente'], sort = TRUE)
+
+#df1 = pd$DataFrame(x)
+
+ax <- sns$set_theme(style="darkgrid")
+ax <- sns$countplot(x='Cliente', data = df0)
+ax$set(ylabel='Nº de pedidos', title='Pareto de Clientes')
+plt$show()
+```
